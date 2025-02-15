@@ -17,7 +17,7 @@ def normalize_points(points):
     # Define the normalization matrix (similar transformation)
    
     centroid = centroid.flatten()
-    points = points.squeeze() 
+    #points = points.squeeze() 
     T = np.array([[scale, 0, -scale * centroid[0]],
                   [0, scale, -scale * centroid[1]],
                   [0, 0, 1]])
