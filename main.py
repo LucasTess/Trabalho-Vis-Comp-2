@@ -11,8 +11,8 @@ from utils.dlt_functions import compute_normalized_dlt
 
 # Exemplo de Teste da função de homografia usando o SIFT
 MIN_MATCH_COUNT = 10
-img1 = cv.imread('box.jpg', 0)   # queryImage
-img2 = cv.imread('photo01a.jpg', 0)        # trainImage
+img1 = cv.imread('imgs/dueto1.jpg', 0)   # queryImage
+img2 = cv.imread('imgs/dueto2.jpg', 0)        # trainImage
 
 # Inicialização do SIFT
 sift = cv.SIFT_create()
@@ -38,7 +38,7 @@ if len(good) > MIN_MATCH_COUNT:
     dst_pts = np.float32([ kp2[m.trainIdx].pt for m in good ]).reshape(-1, 1, 2)
     
     #################################################
-    M = compute_normalized_dlt(kp1,kp2) # AQUI ENTRA A SUA FUNÇÃO DE HOMOGRAFIA!!!!
+    M = compute_normalized_dlt(src_pts,dst_pts) # AQUI ENTRA A SUA FUNÇÃO DE HOMOGRAFIA!!!!
     #################################################
 
     img4 = cv.warpPerspective(img1, M, (img2.shape[1], img2.shape[0])) 

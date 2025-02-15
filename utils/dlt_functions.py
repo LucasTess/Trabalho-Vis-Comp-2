@@ -1,5 +1,5 @@
 import numpy as np
-from aux_functions import compute_A,normalize_points
+from .aux_functions import compute_A,normalize_points
 # Função do DLT Normalizado
 # Entrada: pts1, pts2 (pontos "pts1" da primeira imagem e pontos "pts2" da segunda imagem que atendem a pts2=H.pts1)
 # Saída: H (matriz de homografia estimada)

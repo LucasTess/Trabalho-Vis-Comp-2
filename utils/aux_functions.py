@@ -7,6 +7,7 @@ import numpy as np
 #        T (matriz de normalização)
 def normalize_points(points):
     # Calculate centroid
+    #print(points)
     centroid = np.mean(points, axis=0)
     # Calculate the average distance of the points having the centroid as origin
     distances = np.linalg.norm(points - centroid, axis=1)
@@ -14,6 +15,9 @@ def normalize_points(points):
     # Define the scale to have the average distance as sqrt(2)
     scale = np.sqrt(2) / avg_distance
     # Define the normalization matrix (similar transformation)
+   
+    centroid = centroid.flatten()
+    points = points.squeeze() 
     T = np.array([[scale, 0, -scale * centroid[0]],
                   [0, scale, -scale * centroid[1]],
                   [0, 0, 1]])
