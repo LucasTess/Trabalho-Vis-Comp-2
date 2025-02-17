@@ -22,6 +22,8 @@ def RANSAC(pts1, pts2, dis_threshold, N_0, Ninl, verbose = True):
     if verbose:
         print(f'Running RANSAC with {dis_threshold} tolerance...')
     # Define outros parâmetros como número de amostras do modelo, probabilidades da equação de N, etc 
+    p = 0.99
+    s = 4
     n_points = pts1.shape[0]
     #best_H = None
     best_inliers_idx = []
@@ -39,11 +41,11 @@ def RANSAC(pts1, pts2, dis_threshold, N_0, Ninl, verbose = True):
 
         # Se o número de inliers é o maior obtido até o momento, guarda esse conjunto além das "s" amostras utilizadas. 
         # Atualiza também o número N de iterações necessárias
-    p = 0.99
+    
     
     for i in range (N_0):
         #Pegando amostaras dos pontos
-        indices = np.random.choice(n_points, 4, replace=False)
+        indices = np.random.choice(n_points, s, replace=False)
         sample_pts1 = pts1[indices]
         sample_pts2 = pts2[indices]
         
@@ -66,6 +68,7 @@ def RANSAC(pts1, pts2, dis_threshold, N_0, Ninl, verbose = True):
             best_inliers_idx = inliers_idx
             
             e = (len(pts2)-len(inliers_idx))/len(pts2) # calcula porcentagem de outliers
+            print("Ratio of outliers to pts2 on i = ",i,":")
             print(e)
             N = math.log10(1-p)/math.log10(1-(1-e)**4) # recalcula o número de iterações necessárias
             
@@ -77,10 +80,10 @@ def RANSAC(pts1, pts2, dis_threshold, N_0, Ninl, verbose = True):
                 break
     # Terminado o processo iterativo
     # Estima a homografia final H usando todos os inliers selecionados.
+    print("\n #################################################### \n RANSAC RESULTS \n ####################################################")
     H = compute_normalized_dlt(pts1[best_inliers_idx], pts2[best_inliers_idx])
-    print("Ratio of Best inliers indexes compared to pts2")
+    print("Ratio of Best inliers to pts2:")
     print(len(best_inliers_idx)/len(pts2))
-    print("N,i")
-    print(N,i)
+    print("Ransac ended at i = ",i,"And N = ",N)
     #return H, pts1_in, pts2_in
     return H

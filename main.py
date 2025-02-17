@@ -14,10 +14,10 @@ from utils.dlt_functions import compute_normalized_dlt
 from utils.ransac_functions import RANSAC
 # Exemplo de Teste da função de homografia usando o SIFT
 MIN_MATCH_COUNT = 10
-# img1 = cv.imread('imgs/elefanto1.jpg', 0)   # queryImage
-# img2 = cv.imread('imgs/elefanto2.jpg', 0)        # trainImage
-img1 = cv.imread('imgs/comicsStarWars01.jpg', 0)   # queryImage
-img2 = cv.imread('imgs/comicsStarWars02.jpg', 0)        # trainImage
+img1 = cv.imread('imgs/livro_001.jpg', 0)   # queryImage
+img2 = cv.imread('imgs/livro_002.jpg', 0)        # trainImage
+# img1 = cv.imread('imgs/comicsStarWars01.jpg', 0)   # queryImage
+# img2 = cv.imread('imgs/comicsStarWars02.jpg', 0)        # trainImage
 
 Ninl = 0.90 # Razão limite entre inliers e total de pontos
 N_0 = 1000 # Esse é o N inicial, o máximo para condição de parada
