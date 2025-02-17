@@ -1,5 +1,8 @@
 # TRABALHO 2 DE VISÃO COMPUTACIONAL
 # Nome: 
+# Lucas da Rosa Tessari
+# João Gabriel Santos Custódio
+
 
 # Importa as bibliotecas necessárias
 # Acrescente qualquer outra que quiser
@@ -11,10 +14,15 @@ from utils.dlt_functions import compute_normalized_dlt
 from utils.ransac_functions import RANSAC
 # Exemplo de Teste da função de homografia usando o SIFT
 MIN_MATCH_COUNT = 10
-img1 = cv.imread('imgs/elefanto1.jpg', 0)   # queryImage
-img2 = cv.imread('imgs/elefanto2.jpg', 0)        # trainImage
-#img1 = cv.imread('imgs/comicsStarWars01.jpg', 0)   # queryImage
-#img2 = cv.imread('imgs/comicsStarWars02.jpg', 0)        # trainImage
+# img1 = cv.imread('imgs/elefanto1.jpg', 0)   # queryImage
+# img2 = cv.imread('imgs/elefanto2.jpg', 0)        # trainImage
+img1 = cv.imread('imgs/comicsStarWars01.jpg', 0)   # queryImage
+img2 = cv.imread('imgs/comicsStarWars02.jpg', 0)        # trainImage
+
+Ninl = 0.90 # Razão limite entre inliers e total de pontos
+N_0 = 1000 # Esse é o N inicial, o máximo para condição de parada
+dis_threshold = 3
+
 # Inicialização do SIFT
 sift = cv.SIFT_create()
 
@@ -35,15 +43,13 @@ for m, n in matches:
         good.append(m)
 
 
-Ninl = 50
-N = 1000
-dis_threshold = 3
+
 if len(good) > MIN_MATCH_COUNT:
     src_pts = np.float32([ kp1[m.queryIdx].pt for m in good ]).reshape(-1, 1, 2)
     dst_pts = np.float32([ kp2[m.trainIdx].pt for m in good ]).reshape(-1, 1, 2)
     
     #################################################
-    M = RANSAC(src_pts,dst_pts,dis_threshold,N,Nlin) # AQUI ENTRA A SUA FUNÇÃO DE HOMOGRAFIA!!!!
+    M = RANSAC(src_pts,dst_pts,dis_threshold,N_0,Ninl) # AQUI ENTRA A SUA FUNÇÃO DE HOMOGRAFIA!!!!
     #################################################
 
     img4 = cv.warpPerspective(img1, M, (img2.shape[1], img2.shape[0])) 

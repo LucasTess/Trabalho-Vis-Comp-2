@@ -1,4 +1,5 @@
 import numpy as np
+import math
 from .dlt_functions import compute_normalized_dlt
 ########################################################################################################################
 # Função do RANSAC
@@ -17,7 +18,7 @@ from .dlt_functions import compute_normalized_dlt
 
 
 
-def RANSAC(pts1, pts2, dis_threshold, N, Ninl, verbose = True):
+def RANSAC(pts1, pts2, dis_threshold, N_0, Ninl, verbose = True):
     if verbose:
         print(f'Running RANSAC with {dis_threshold} tolerance...')
     # Define outros parâmetros como número de amostras do modelo, probabilidades da equação de N, etc 
@@ -38,8 +39,9 @@ def RANSAC(pts1, pts2, dis_threshold, N, Ninl, verbose = True):
 
         # Se o número de inliers é o maior obtido até o momento, guarda esse conjunto além das "s" amostras utilizadas. 
         # Atualiza também o número N de iterações necessárias
+    p = 0.99
     
-    for i in range (N):
+    for i in range (N_0):
         #Pegando amostaras dos pontos
         indices = np.random.choice(n_points, 4, replace=False)
         sample_pts1 = pts1[indices]
@@ -59,12 +61,26 @@ def RANSAC(pts1, pts2, dis_threshold, N, Ninl, verbose = True):
 
         # Considera inlier se o erro for menor que o threshold
         inliers_idx = np.where(errors < dis_threshold)[0]
-        #print(inliers_idx)
-        if len(inliers_idx) > len(best_inliers_idx) and len(inliers_idx) >= Ninl:
+        #print(len(errors),len(pts2))
+        if len(inliers_idx) > len(best_inliers_idx):
             best_inliers_idx = inliers_idx
+            
+            e = (len(pts2)-len(inliers_idx))/len(pts2) # calcula porcentagem de outliers
+            print(e)
+            N = math.log10(1-p)/math.log10(1-(1-e)**4) # recalcula o número de iterações necessárias
+            
+            if len(inliers_idx)/len(pts2) >= Ninl:
+                print("Ratio of inliers indexes at break")
+                print(len(inliers_idx)/len(pts2))
+                break
+            elif i >= N:
+                break
     # Terminado o processo iterativo
     # Estima a homografia final H usando todos os inliers selecionados.
     H = compute_normalized_dlt(pts1[best_inliers_idx], pts2[best_inliers_idx])
-    print(best_inliers_idx)
+    print("Ratio of Best inliers indexes compared to pts2")
+    print(len(best_inliers_idx)/len(pts2))
+    print("N,i")
+    print(N,i)
     #return H, pts1_in, pts2_in
     return H
