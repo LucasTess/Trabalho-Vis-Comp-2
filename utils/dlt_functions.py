@@ -1,20 +1,36 @@
 import numpy as np
-from .aux_functions import compute_A,normalize_points
-# Função do DLT Normalizado
-# Entrada: pts1, pts2 (pontos "pts1" da primeira imagem e pontos "pts2" da segunda imagem que atendem a pts2=H.pts1)
-# Saída: H (matriz de homografia estimada)
-def compute_normalized_dlt(pts1, pts2):
+from .aux_functions import compute_A, normalize_points
 
-    # Normaliza pontos
-    T1, norm_points1 = normalize_points(pts1)
-    T2, norm_points2 = normalize_points(pts2)
-    # Constrói o sistema de equações empilhando a matrix A de cada par de pontos correspondentes normalizados
-    A = compute_A(norm_points1,norm_points2)
-    # Calcula o SVD da matriz A_empilhada e estima a homografia H_normalizada 
-    U,S,Vt = np.linalg.svd(A)
-    h = Vt[-1,:]
-    H_matrix = np.reshape(h,(3,3))
-    # Denormaliza H_normalizada e obtém H
-    H = np.linalg.inv(T2) @ H_matrix @ T1
+def compute_normalized_dlt(points1: np.ndarray, points2: np.ndarray) -> np.ndarray:
+    """
+    Estima a homografia entre dois conjuntos de pontos usando o método DLT normalizado.
 
-    return H
+    A função normaliza os pontos de entrada, calcula a matriz A a partir dos pontos normalizados, 
+    realiza a decomposição SVD para estimar a homografia e, finalmente, denormaliza a homografia.
+
+    Parâmetros:
+    -----------
+    points1 : ndarray, shape (n_points, 2)
+        Conjunto de pontos 2D da primeira imagem.
+    
+    points2 : ndarray, shape (n_points, 2)
+        Conjunto de pontos 2D da segunda imagem.
+
+    Retorna:
+    --------
+    H : ndarray, shape (3, 3)
+        Matriz de homografia estimada entre as duas imagens.
+    """
+    normalization_matrix1, normalized_points1 = normalize_points(points1)
+    normalization_matrix2, normalized_points2 = normalize_points(points2)
+    
+    matrix_A = compute_A(normalized_points1, normalized_points2)
+    
+    _, _, Vt = np.linalg.svd(matrix_A)
+    homography_vector = Vt[-1, :]
+    
+    normalized_homography_matrix = np.reshape(homography_vector, (3, 3))
+    
+    homography_matrix = np.linalg.inv(normalization_matrix2) @ normalized_homography_matrix @ normalization_matrix1
+
+    return homography_matrix
